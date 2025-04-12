@@ -25,6 +25,7 @@ def summarize_with_gemini(text):
 
 @app.event("app_mention")
 def handle_app_mention(event, say, client):
+    print("DailyReport mentioned")
     thread_ts = event.get("thread_ts")
     channel = event["channel"]
     if not thread_ts:
