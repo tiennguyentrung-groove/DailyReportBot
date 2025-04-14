@@ -20,7 +20,7 @@ app = App(token=SLACK_BOT_TOKEN)
 
 def summarize_with_gemini(text):
     print(f"Summarizing text: {text}")
-    prompt = f"Collect these daily reports to a single daily report: \n{text}"
+    prompt = f"Collect these daily reports to a single daily report. Please ignore messages that are not the report format. Bold text: wrap your text with asterisks (*): *bold*. Reports: \n{text}"
     response = model.generate_content(prompt)
     return response.text.strip()
 
@@ -35,9 +35,10 @@ def handle_app_mention(event, say, client):
     try:
         replies = client.conversations_replies(channel=channel, ts=thread_ts)
         messages = replies["messages"]
-        thread_text = "\n".join(f"{m.get('text', '')}" for m in messages[:-1])
+        thread_text = "\n----------------\n".join(f"{m.get('text', '')}" for m in messages[:-1])
 
         summary = summarize_with_gemini(thread_text)
+        #say(summary)
 
         client.chat_postMessage(
             channel=SUMMARY_CHANNEL,
