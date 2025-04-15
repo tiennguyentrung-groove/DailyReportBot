@@ -20,7 +20,25 @@ app = App(token=SLACK_BOT_TOKEN)
 
 def summarize_with_gemini(text):
     print(f"Summarizing text: {text}")
-    prompt = f"Collect these daily reports to a single daily report. Please ignore messages that are not the report format. Bold text: wrap your text with asterisks (*): *bold*. Reports: \n{text}"
+    prompt = f'''Collect these daily reports to a single daily report. 
+    Please ignore messages that are not the report format. 
+    Bold text: wrap your text with asterisks (*): *bold*. 
+    Below is the output report format, replace yyyy-MM-dd with the current date, try to follow the format as much as possible, no more additional text:\n
+    
+    Daily Standup Report on yyyy-MM-dd
+    1. What's done?
+    • Task 1
+    • Task 2
+    2. What's next?
+    • Task 1
+    • Task 2
+    3. What's blocked?
+    • Issue 1
+    • Issue 2
+    or
+    • None
+    
+    Reports: \n{text}'''
     response = model.generate_content(prompt)
     return response.text.strip()
 
