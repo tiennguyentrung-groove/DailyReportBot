@@ -14,32 +14,41 @@ GEMINI_API_KEY = os.environ["GEMINI_API_KEY"]
 
 # Initialize Gemini
 genai.configure(api_key=GEMINI_API_KEY)
-model = genai.GenerativeModel("gemini-2.0-flash")
-
-app = App(token=SLACK_BOT_TOKEN)
-
-def summarize_with_gemini(text):
-    print(f"Summarizing text: {text}")
-    prompt = f'''Collect these daily reports to a single daily report. 
+system_message = f'''You are a helpful and concise summarization bot. Your mission is to collect these daily reports to a single daily report. 
     Please ignore messages that are not the report format. 
     Bold text: wrap your text with asterisks (*): *bold*. 
     Below is the output report format, replace yyyy-MM-dd with the current date, try to follow the format as much as possible, no more additional text:\n
     
-    Daily Standup Report on yyyy-MM-dd
-    1. What's done?
+    *Daily Standup Report on yyyy-MM-dd*
+    *1. What's done?*
     • Task 1
     • Task 2
-    2. What's next?
+    *2. What's next?*
     • Task 1
     • Task 2
-    3. What's blocked?
+    *3. What's blocked?*
     • Issue 1
     • Issue 2
     or
     • None
+    *4. Notes*
+    • Note 1
+    • Note 2
+    or
+    • None
+
     
-    Reports: \n{text}'''
-    response = model.generate_content(prompt)
+    " What's done" is list of task we did yesterday. "What's next" is list of tasks we need to do today. "What's blocked" is list of issues that prevent us from completing our tasks. "Notes" is any additional information that you want to include in your report.
+    We can ignore section "3. What's blocked?" and "4. Notes" if there are no items.
+    '''
+model = genai.GenerativeModel("gemini-2.0-flash", system_instruction=system_message)
+
+app = App(token=SLACK_BOT_TOKEN)
+
+def summarize_with_gemini(reports_text):
+    #print(f"Summarizing text: {reports_text}")
+    response = model.generate_content(reports_text)
+    #print(response.text)
     return response.text.strip()
 
 @app.event("app_mention")
@@ -68,5 +77,27 @@ def handle_app_mention(event, say, client):
     except Exception as e:
         say(f"Error summarizing: {str(e)}")
 
-if __name__ == "__main__":
-    SocketModeHandler(app, SLACK_APP_TOKEN).start()
+summarize_with_gemini('''Daily report 2025-04-21
+cc: a. @Tien Nguyen, a. @An Vo, @David Truong
+-------------------
+Today - 2025-04-21
+• [PRD-1462][UI/UX] Support responsive for Jockey page /form-guide/horse-jockey/{jockeyUrlId
+• [PRD-1464][UI/UX] Support responsive for Ratings page /form-guide/ratings
+-------------------
+Today - 2025-04-21
+• PRD-1449: [Documentation] Create a wiki page to listing all the services and deployed servers
+Check and clean tickets on the board
+-------------------
+Today - 2025-04-21
+[PRD-1500] Create a private API for Edgestackers
+-------------------
+Yesterday - 2025-04-18
+Daily Support
+TabScraper no data import issue
+RatingCheck - fix sql timeout issue
+[PRD-1504] Rating import issue failed
+Today - 2025-04-21
+Daily Support
+[PRD-1504] Rating import issue failed''')
+# if __name__ == "__main__":
+#     SocketModeHandler(app, SLACK_APP_TOKEN).start()
