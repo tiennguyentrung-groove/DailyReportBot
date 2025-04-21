@@ -77,27 +77,5 @@ def handle_app_mention(event, say, client):
     except Exception as e:
         say(f"Error summarizing: {str(e)}")
 
-summarize_with_gemini('''Daily report 2025-04-21
-cc: a. @Tien Nguyen, a. @An Vo, @David Truong
--------------------
-Today - 2025-04-21
-• [PRD-1462][UI/UX] Support responsive for Jockey page /form-guide/horse-jockey/{jockeyUrlId
-• [PRD-1464][UI/UX] Support responsive for Ratings page /form-guide/ratings
--------------------
-Today - 2025-04-21
-• PRD-1449: [Documentation] Create a wiki page to listing all the services and deployed servers
-Check and clean tickets on the board
--------------------
-Today - 2025-04-21
-[PRD-1500] Create a private API for Edgestackers
--------------------
-Yesterday - 2025-04-18
-Daily Support
-TabScraper no data import issue
-RatingCheck - fix sql timeout issue
-[PRD-1504] Rating import issue failed
-Today - 2025-04-21
-Daily Support
-[PRD-1504] Rating import issue failed''')
-# if __name__ == "__main__":
-#     SocketModeHandler(app, SLACK_APP_TOKEN).start()
+if __name__ == "__main__":
+    SocketModeHandler(app, SLACK_APP_TOKEN).start()
