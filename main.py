@@ -31,7 +31,7 @@ system_message = f'''You are a helpful and concise summarization bot. Your missi
     • Issue 2
     or
     • None
-    *4. Notes*
+    *!!! Notes*
     • Note 1
     • Note 2
     or
@@ -39,7 +39,7 @@ system_message = f'''You are a helpful and concise summarization bot. Your missi
 
     
     " What's done" is list of task we did yesterday. "What's next" is list of tasks we need to do today. "What's blocked" is list of issues that prevent us from completing our tasks. "Notes" is any additional information that you want to include in your report.
-    We can ignore section "3. What's blocked?" and "4. Notes" if there are no items.
+    We can ignore section "3. What's blocked?" and "!!! Notes" if there are no items.
     '''
 model = genai.GenerativeModel("gemini-2.0-flash", system_instruction=system_message)
 
